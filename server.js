@@ -71,3 +71,10 @@ app.post("/api/characters", function(req, res) {
 
 
 //HTML routes - get all *
+
+// Starts the server to begin listening
+// =============================================================
+app.listen(PORT, function() {
+    console.log("App listening on PORT " + PORT);
+  });
+  
