@@ -12,28 +12,26 @@ const PORT = process.env.PORT || 3000;
 app.use(Express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
-//JSON 
-var contents = fs.readFileSync("db/db.json")
-var notes = JSON.parse(contents)
 
 // Routes ============================================================= //
 
 //HTML get routes - notes
 app.get("/notes",  (req, res) => {
-    res.sendFile(path.join(__dirname, "add.html"));
+    res.sendFile(path.join(__dirname, "public/notes.html"));
 });
 //API Get Route notes
 app.get("/api/notes", (req, res) => {
-    fs.writeFile('db/db.json', "utf-8", (err, data) => {
+    fs.writeFile('db/db.json', function (req, res) {
         if (err) throw err;
-    })
         return res.json(JSON.parse(data));
+    })
+    
 
 //API POST Route
 // Create New Characters - takes in JSON input
 app.post("/api/notes", function (req, res) {
-    // req.body hosts is equal to the JSON post sent from the user
-    // This works because of our body parsing middleware
+// req.body hosts is equal to the JSON post sent from the user
+// This works because of our body parsing middleware
     var newNotes = req.body;
     fs.readFile("db/db.json", function (err, data) {
         if (err) throw err;
@@ -57,8 +55,11 @@ app.post("/api/notes", function (req, res) {
 
 app.delete("/api/notes/:id", function (req, res) {
     // Empty out the arrays of data
-    tableData.length = 0;
-    waitListData.length = 0;
+    notes = notes.filter(note=>note.id != req.params.id)
+    fs.writeFile('db/db.json', JSON.stringify(notes), function (err) {
+        if (err) throw err;
+        return res.json(newCharacter);
+    })
 
     res.json({ ok: true });
 });
@@ -66,7 +67,8 @@ app.delete("/api/notes/:id", function (req, res) {
 
 
 
-//HTML routes - get all *
+//HTML routes - get all * will return to index.html
+
 
 // Starts the server to begin listening
 // =============================================================
