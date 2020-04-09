@@ -18,54 +18,50 @@ var notes = JSON.parse(contents)
 
 // Routes ============================================================= //
 
-// Basic route that sends the user first to the AJAX Page
-app.get("/", function(req, res) {
-    res.sendFile(path.join(__dirname, "/public/index.html"));
-  });
 //HTML get routes - notes
-app.get("/notes", function(req, res) {
+app.get("/notes",  (req, res) => {
     res.sendFile(path.join(__dirname, "add.html"));
-  });
-
-app.post("/api/notes", (req,res) => {
-
-    const remote = req.body;
-    //add id property to object
-    newNote.id = `//create Id//// `
-    
-}) 
-
-
-
-
-
-//API Get route
-app.listen(PORT, () => {
-    console.log(`Listening on port: ${PORT}`)
-
-})
+});
+//API Get Route notes
+app.get("/api/notes", (req, res) => {
+    fs.writeFile('db/db.json', "utf-8", (err, data) => {
+        if (err) throw err;
+    })
+        return res.json(JSON.parse(data));
 
 //API POST Route
 // Create New Characters - takes in JSON input
-app.post("/api/characters", function(req, res) {
+app.post("/api/notes", function (req, res) {
     // req.body hosts is equal to the JSON post sent from the user
     // This works because of our body parsing middleware
-    var newCharacter = req.body;
-  
-    // Using a RegEx Pattern to remove spaces from newCharacter
-    // You can read more about RegEx Patterns later https://www.regexbuddy.com/regex.html
-    newCharacter.routeName = newCharacter.name.replace(/\s+/g, "").toLowerCase();
-  
-    console.log(newCharacter);
-  
-    characters.push(newCharacter);
-  
-    res.json(newCharacter);
-  });
+    var newNotes = req.body;
+    fs.readFile("db/db.json", function (err, data) {
+        if (err) throw err;
+        var notes = JSON.parse(data);
+        req.body.id = notes.length + 1;
+        notes.push(newNotes);
+
+    fs.writeFile('db/db.json', JSON.stringify(notes), function (err) {
+        if (err) throw err;
+        return res.json(newCharacter);
+    })
+    
+});
 
 
 
 //API Delete Route
+// ---------------------------------------------------------------------------
+// I added this below code so you could clear out the table while working with the functionality.
+// Don"t worry about it!
+
+app.delete("/api/notes/:id", function (req, res) {
+    // Empty out the arrays of data
+    tableData.length = 0;
+    waitListData.length = 0;
+
+    res.json({ ok: true });
+});
 
 
 
@@ -74,7 +70,6 @@ app.post("/api/characters", function(req, res) {
 
 // Starts the server to begin listening
 // =============================================================
-app.listen(PORT, function() {
+app.listen(PORT, function () {
     console.log("App listening on PORT " + PORT);
-  });
-  
+});
