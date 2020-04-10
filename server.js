@@ -52,8 +52,7 @@ app.post("/api/notes", function (req, res) {
 
 //API Delete Route
 // ---------------------------------------------------------------------------
-// I added this below code so you could clear out the table while working with the functionality.
-// Don"t worry about it!
+
 
 app.delete("/api/notes/:id", function (req, res) {
     // Empty out the arrays of data
