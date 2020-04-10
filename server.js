@@ -13,6 +13,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 
+
+
 // Routes ============================================================= //
 
 //HTML get routes - notes
@@ -21,27 +23,27 @@ app.get("/notes", (req, res) => {
 });
 //API Get Route notes
 app.get("/api/notes", function (req, res) {
-    fs.readFile('db/db.json', function (req, res) {
-        if (err) throw err;
-        return res.json(JSON.parse(data));
-    });
 
-})
+    res.sendFile(path.join(__dirname, "public/notes.html"))
+
+});
+
+
 //API POST Route
 // Create New Characters - takes in JSON input
 app.post("/api/notes", function (req, res) {
     // req.body hosts is equal to the JSON post sent from the user
     // This works because of our body parsing middleware
-    var newNotes = req.body;
+    var newNote = req.body;
     fs.readFile("db/db.json", function (err, data) {
         if (err) throw err;
         var notes = JSON.parse(data);
         req.body.id = notes.length + 1;
-        notes.push(newNotes);
+        notes.push(newNote);
 
         fs.writeFile('db/db.json', JSON.stringify(notes), function (err) {
             if (err) throw err;
-            return res.json(newNotes);
+            return res.json(newNote);
         })
 
     });
@@ -58,15 +60,11 @@ app.delete("/api/notes/:id", function (req, res) {
     notes = notes.filter(note => note.id != req.params.id)
     fs.writeFile('db/db.json', JSON.stringify(notes), function (err) {
         if (err) throw err;
-        return res.json(newNotes);
+        return res.json(newNote);
     })
 
     res.json({ ok: true });
 });
-
-
-
-
 //HTML routes - get all * will return to index.html
 app.get("*", function (req, res) {
     res.sendFile(path.join(__dirname, "public/index.html"));
